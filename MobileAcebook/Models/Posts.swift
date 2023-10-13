@@ -12,11 +12,11 @@ public struct Posts: Codable {
     let token: String
 }
 public struct Post: Codable {
-    let likes: [String]
-    let comments: Int
     let _id: String
-    let message: String
-    let createdBy: String
+    let comments: Int
     let createdAt: String
+    let createdBy: String
+    let image: String
+    let likes: [String]
+    let message: String
 }
-
