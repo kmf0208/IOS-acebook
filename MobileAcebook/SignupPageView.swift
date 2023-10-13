@@ -63,8 +63,9 @@ struct SignupPageView: View {
                     .font(Font.custom("Sulphur Point", size: 22))
                 
                 TextField("Email address", text: $email, onEditingChanged: { editing in
-                            if !editing {
-                                isEmailValid = isValidEmail(email)
+                    if !editing {
+                        isEmailValid = isValidEmail(email)
+                    }
                             })
                     .padding()
                     .background(.white)
@@ -147,11 +148,11 @@ struct SignupPageView: View {
     }
 }
 
-struct SignupPageView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignupPageView()
-    }
-}
+//struct SignupPageView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SignupPageView()
+//    }
+//}
 
 struct SecureInputView: View {
     

@@ -70,6 +70,18 @@ struct FeedView: View {
                     self.posts = posts.posts
                 }
             }
+            .refreshable{
+                guard var token = UserDefaults.standard.string(forKey: "token") else {
+                    return
+                }
+                service.getAllPosts(token: token) { (posts, err) in
+                    guard var posts = posts else {
+                        // handle error
+                        return
+                    }
+                    self.posts = posts.posts
+                }
+            }
            
             CustomTextField()
                 .padding()
@@ -88,14 +100,6 @@ struct FeedView: View {
                 startPoint: UnitPoint(x: 0.77, y: 1),
                 endPoint: UnitPoint(x: 0.76, y: 0)
             ))
-    }
-    
-    func createNewPost(image: Data = Data()) {
-        guard let token = UserDefaults.standard.string(forKey: "token") else {
-            return
-        }
-        let post = CreatePost(image: image, message: postTextField)
-        post.newPost(token: token)
     }
 }
 

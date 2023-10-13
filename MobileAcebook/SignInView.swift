@@ -38,6 +38,8 @@ struct SignInView: View {
             Spacer()
             VStack {
                 TextField("Email", text: $email)
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled(true)
                     .padding()
                     .background(.white)
                     .foregroundColor(.black)

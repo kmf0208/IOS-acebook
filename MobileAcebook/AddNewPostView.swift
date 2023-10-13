@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct CustomTextField: View {
     @State var message: String = ""
     @State var selectedItem: PhotosPickerItem? = nil
     @State var selectedImageData: Data = Data()
+    private var service = FeedService()
+    @State var posts = [Post]()
+    @State var postTextField: String = ""
     var body: some View {
         HStack(alignment: .bottom) {
             HStack(spacing: 8) {
@@ -30,61 +34,47 @@ struct CustomTextField: View {
             .cornerRadius(10)
             
             // Send button
-                Button(action: {
+            Button(action: {
                 if selectedItem == nil {
-                createNewPost()
-                guard let token = UserDefaults.standard.string(forKey: "token") else {
-                    return
-                }
-                service.getAllPosts(token: token) { (posts, err) in
-                    guard let posts = posts else {
-                        // handle error
+                    createNewPost()
+                    guard let token = UserDefaults.standard.string(forKey: "token") else {
                         return
                     }
-                    self.posts = posts.posts
-                }
-            } else {
-                createNewPost(image: selectedImageData)
-                guard let token = UserDefaults.standard.string(forKey: "token") else {
-                    return
-                }
-                service.getAllPosts(token: token) { (posts, err) in
-                    guard let posts = posts else {
-                        // handle error
+                } else {
+                    createNewPost(image: selectedImageData)
+                    guard let token = UserDefaults.standard.string(forKey: "token") else {
                         return
                     }
-                    self.posts = posts.posts
                 }
-            }
-                } label: {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.largeTitle)
-                })
-                Button {
-                    // make something
-                } label: {
-                       PhotosPicker(
-                        selection: $selectedItem,
-                        matching: .images,
-                        photoLibrary: .shared()) {
-                            Image(systemName: "photo.circle.fill")
+            }, label: {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.largeTitle)
+            })
+            Button {
+                // make something
+            } label: {
+                PhotosPicker(
+                    selection: $selectedItem,
+                    matching: .images,
+                    photoLibrary: .shared()) {
+                        Image(systemName: "photo.circle.fill")
                             .font(.largeTitle)
                             .foregroundColor(Color(.systemGray))
                             .onChange(of: selectedItem) { newItem in
-                            Task {
-                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                    selectedImageData = data
-                                    print("image data \(selectedImageData)")
+                                Task {
+                                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                        selectedImageData = data
+                                        print("image data \(selectedImageData)")
+                                    }
                                 }
-                        }
-                    
+                                
+                            }
+                        
+                        
+                        // Image(systemName: "photo.circle.fill")
+                        //     .font(.largeTitle)
+                        //     .foregroundColor(Color(.systemGray))
                     }
-
-
-                    // Image(systemName: "photo.circle.fill")
-                    //     .font(.largeTitle)
-                    //     .foregroundColor(Color(.systemGray))
-                }
             }
         }
         .padding(.leading , 14)
@@ -100,8 +90,14 @@ struct CustomTextField: View {
         guard let token = UserDefaults.standard.string(forKey: "token") else {
             return
         }
-        let post = CreatePost(image: image, message: postTextField)
-        post.newPost(token: token)
+        let post = CreatePost(image: image, message: message)
+        post.newPost(token: token) { (posts, error) in
+            guard var posts = posts else {
+                // handle error
+                return
+            }
+            self.posts = posts.posts
+        }
     }
 }
 extension View {

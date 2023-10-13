@@ -17,8 +17,13 @@ class CreatePost {
         self.message = message
     }
     
-    func newPost(token: String) -> Void {
+    @State var posts = Posts(posts: [], token: "")
+    
+    typealias CreatePostCallback = (Posts?, Error?) -> Void
+    
+    func newPost(token: String, completion: @escaping CreatePostCallback) -> Void {
         var request = URLRequest(url: URL(string: "http://127.0.0.1:8080/posts")!)
+        var postsService = FeedService()
         
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -60,6 +65,17 @@ class CreatePost {
                     
                     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                         print(response)
+                        if let error = error {
+                            completion(nil, error)
+                            return
+                        }
+                        postsService.getAllPosts(token: token, completion: { (posts, error) in
+                            guard var posts = posts else {
+                                return
+                            }
+                            self.posts = posts
+                        })
+                        completion(self.posts, nil)
                     }
                     task.resume()
                 }
@@ -91,6 +107,17 @@ class CreatePost {
             
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 print(response)
+                if let error = error {
+                    completion(nil, error)
+                    return
+                }
+                postsService.getAllPosts(token: token, completion: { (posts, error) in
+                    guard var posts = posts else {
+                        return
+                    }
+                    self.posts = posts
+                })
+                completion(self.posts, nil)
             }
             task.resume()
         }
