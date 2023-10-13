@@ -11,13 +11,20 @@ struct SignupPageView: View {
     
     @State private var username: String = ""
     @State private var email: String = ""
+    @State private var isEmailValid = false
     @State private var password: String = ""
     @State private var password2: String = ""
     @State private var avatar: String? = nil
+    @State private var isRegistrationComplete = false
     
     func submitUser() -> Void {
         let signupService = SignupService(email: email, username: username, password: password, password2: password2, avatar: avatar)
         signupService.createAccount()
+        isRegistrationComplete = true
+    }
+    
+    func isValidEmail(_ email: String) -> Bool {
+        return email.contains("@") && email.contains(".")
     }
     
     var body: some View {
@@ -55,7 +62,10 @@ struct SignupPageView: View {
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
                 
-                TextField("Email address", text: $email)
+                TextField("Email address", text: $email, onEditingChanged: { editing in
+                            if !editing {
+                                isEmailValid = isValidEmail(email)
+                            })
                     .padding()
                     .background(.white)
                     .foregroundColor(.black)
@@ -91,7 +101,10 @@ struct SignupPageView: View {
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
                 
-                if password != password2 {
+              
+                if !isEmailValid {
+                    Text("Invalid email address").foregroundStyle(.red)
+                } else if password != password2 {
                     Text("Passwords must match!").foregroundStyle(Color(red: 0.83, green: 0.2, blue: 0.2))
                 } else if password.count < 8 {
                     Text("Passwords must have a length of 8 or more").foregroundStyle(Color(red: 0.83, green: 0.2, blue: 0.2))

@@ -11,6 +11,7 @@ struct SignInView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var token: String? = nil
+    @State private var isSecured: Bool = true
     private var service = AuthenticationService()
     @State private var loginStatus: String = ""
     
