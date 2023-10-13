@@ -17,29 +17,27 @@ struct FeedView: View {
     @State var postArray: [String] = []
     private var service = FeedService()
     @State var posts = [Post]()
-//    @State var posts: [Post]
+    //    @State var posts: [Post]
     
     var body: some View {
         VStack {
+            HStack {
+                Text("My Feed")
+                    .padding(
+                        EdgeInsets(
+                            top: 34,
+                            leading: 35,
+                            bottom: 14,
+                            trailing: 35
+                        )
+                    )
+                    .font(Font.custom("Sulphur Point", size: 34))
+                    .kerning(0.374)
+                    .foregroundColor(.black)
+                Spacer()
+            }
             Spacer()
-                .frame(height: 30)
-            //            TextField("Write a post", text: $postTextField)
-            //                .lineLimit(...7)
-            //                .padding()
-            //                .foregroundColor(.black)
-            //                .frame(width: 303, height: 36)
-            //                .background(.white)
-            //                .cornerRadius(6)
-            //                .overlay(RoundedRectangle(cornerRadius: 6)
-            //                    .inset(by: 0.5)
-            //                    .stroke(Color(red: 0.16, green: 0.16, blue: 0.16).opacity(0.5), lineWidth: 1))
-            //
-            //            Button(action: {
-            //                createNewPost()
-            //            }, label: {
-            //                Text("Post")
-            //            })
-            
+                .frame(height: 20)
             List(posts, id: \._id) { post in
                 FeedPostView(post: post)
                     .listRowSeparator(.hidden)
@@ -82,7 +80,7 @@ struct FeedView: View {
                     self.posts = posts.posts
                 }
             }
-           
+            
             CustomTextField()
                 .padding()
             Spacer()

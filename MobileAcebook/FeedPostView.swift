@@ -23,6 +23,12 @@ struct FeedPostView: View {
                     .padding(10)
                     .background(Color.clear)
                     .clipShape(Circle())
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 44)
+                            .inset(by: 0.5)
+                            .stroke(.black, lineWidth: 1)
+                        
+                    )
                 VStack(alignment: .leading){
                     Text("Username")
                     Text("\(datePart)")
