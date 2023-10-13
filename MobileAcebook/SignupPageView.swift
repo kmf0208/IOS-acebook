@@ -61,6 +61,8 @@ struct SignupPageView: View {
                             .inset(by: 0.5)
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled(true)
                 
                 TextField("Email address", text: $email, onEditingChanged: { editing in
                     if !editing {
@@ -77,6 +79,8 @@ struct SignupPageView: View {
                             .inset(by: 0.5)
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled(true)
                 
                 SecureInputView("Password", text: $password)
                     .padding()
@@ -89,6 +93,7 @@ struct SignupPageView: View {
                             .inset(by: 0.5)
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
+                    .textContentType(.oneTimeCode)
                 
                 SecureInputView("Confirm password", text: $password2)
                     .padding()
@@ -101,9 +106,12 @@ struct SignupPageView: View {
                             .inset(by: 0.5)
                             .stroke(.white, lineWidth: 1))
                     .font(Font.custom("Sulphur Point", size: 22))
+                    .textContentType(.oneTimeCode)
                 
               
-                if !isEmailValid {
+                if email == "" && password == "" && password2 == "" {
+                    Text("")
+                } else if !isEmailValid {
                     Text("Invalid email address").foregroundStyle(.red)
                 } else if password != password2 {
                     Text("Passwords must match!").foregroundStyle(Color(red: 0.83, green: 0.2, blue: 0.2))
