@@ -5,7 +5,9 @@
 //  Created by Alina Ermakova on 09/10/2023.
 //
 
+import PhotosUI
 import SwiftUI
+import Cloudinary
 
 struct FeedView: View {
     init(posts:[Post] = []) {
@@ -14,7 +16,7 @@ struct FeedView: View {
     @State var postTextField: String = ""
     @State var postArray: [String] = []
     private var service = FeedService()
-        @State var posts = [Post]()
+    @State var posts = [Post]()
 //    @State var posts: [Post]
     
     var body: some View {
@@ -88,11 +90,11 @@ struct FeedView: View {
             ))
     }
     
-    func createNewPost() {
-        guard var token = UserDefaults.standard.string(forKey: "token") else {
+    func createNewPost(image: Data = Data()) {
+        guard let token = UserDefaults.standard.string(forKey: "token") else {
             return
         }
-        let post = CreatePost(image: "", message: postTextField)
+        let post = CreatePost(image: image, message: postTextField)
         post.newPost(token: token)
     }
 }

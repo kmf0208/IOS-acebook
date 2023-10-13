@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CustomTextField: View {
     @State var message: String = ""
+    @State var selectedItem: PhotosPickerItem? = nil
+    @State var selectedImageData: Data = Data()
     var body: some View {
         HStack(alignment: .bottom) {
             HStack(spacing: 8) {
@@ -28,20 +30,60 @@ struct CustomTextField: View {
             .cornerRadius(10)
             
             // Send button
-            if message != "" {
-                Button {
-                    // send something
+                Button(action: {
+                if selectedItem == nil {
+                createNewPost()
+                guard let token = UserDefaults.standard.string(forKey: "token") else {
+                    return
+                }
+                service.getAllPosts(token: token) { (posts, err) in
+                    guard let posts = posts else {
+                        // handle error
+                        return
+                    }
+                    self.posts = posts.posts
+                }
+            } else {
+                createNewPost(image: selectedImageData)
+                guard let token = UserDefaults.standard.string(forKey: "token") else {
+                    return
+                }
+                service.getAllPosts(token: token) { (posts, err) in
+                    guard let posts = posts else {
+                        // handle error
+                        return
+                    }
+                    self.posts = posts.posts
+                }
+            }
                 } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.largeTitle)
-                }
-            } else {
+                })
                 Button {
                     // make something
                 } label: {
-                    Image(systemName: "photo.circle.fill")
-                        .font(.largeTitle)
-                        .foregroundColor(Color(.systemGray))
+                       PhotosPicker(
+                        selection: $selectedItem,
+                        matching: .images,
+                        photoLibrary: .shared()) {
+                            Image(systemName: "photo.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundColor(Color(.systemGray))
+                            .onChange(of: selectedItem) { newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    selectedImageData = data
+                                    print("image data \(selectedImageData)")
+                                }
+                        }
+                    
+                    }
+
+
+                    // Image(systemName: "photo.circle.fill")
+                    //     .font(.largeTitle)
+                    //     .foregroundColor(Color(.systemGray))
                 }
             }
         }
@@ -53,6 +95,13 @@ struct CustomTextField: View {
         .background(.ultraThinMaterial)
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.3), value: message)
+    }
+    func createNewPost(image: Data = Data()) {
+        guard let token = UserDefaults.standard.string(forKey: "token") else {
+            return
+        }
+        let post = CreatePost(image: image, message: postTextField)
+        post.newPost(token: token)
     }
 }
 extension View {
